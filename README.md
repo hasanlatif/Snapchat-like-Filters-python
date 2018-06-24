@@ -10,7 +10,7 @@ Dependancies
  
 * for opencv-python use pip
 
-    pip3 install opencv-python
+      pip3 install opencv-python
 
     
    to install opencv
@@ -18,13 +18,13 @@ Dependancies
  
  * for dlib use pip
  
-    pip3 install dlib
+       pip3 install dlib
 
  
 Running the Script
 ==================
 
-* Run this script go the project directory using command prompt and write 
+* To run this script go the project directory using command prompt and write 
    
-      python alpa_blending_video.py
+      python  simple_emoji_snap_like_filter_v1.py
  
