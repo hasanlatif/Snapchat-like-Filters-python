@@ -1,6 +1,6 @@
 # Snapchat-like-Filters-python
 
-* This complete project is in public domain.Use this code in your project,work,apps as you wish.
+* This complete project is in public domain.Use this code in your project,work and in apps as you wish.
 
 Dependancies
 ============
