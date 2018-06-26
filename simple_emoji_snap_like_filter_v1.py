@@ -7,7 +7,7 @@
  'pip3 install opencv-python' to install opencv
  and use
  pip3 insatall dlib to install dlib
-Run this script go the project directory using command prompt and write  ""python alpa_blending_video.py"
+Run this script go the project directory using command prompt and write  ""python  simple_emoji_snap_like_filter_v1.py"
 '''
 
 
@@ -26,15 +26,18 @@ def dets_to_bb(dets):
     :param dets: dlib rectangle object from HOG detector
     :return: (x,y,w,h)
     """
-    x=dets.top()
+    x=dets.left()
     y = dets.top()
     w = dets.right() - x
+
+
     h = dets.bottom() - y
+    print("[Debug at det.bottom()],",dets.bottom())
     return (x,y,w,h)
 
 img2= cv2.imread("emoji.jpg")   ###  Reading images to be placed on video frame
 
-             ### Camera port
+
 cap = cv2.VideoCapture(camera_port)  ## making object for camera
 w=cap.get(3)                          ###getting width of frame
 h=cap.get(4)                         ##getting height of frame
@@ -46,26 +49,33 @@ if (cap.get((cv2.CAP_PROP_FPS))==0):    ### if fps is zero return as  N/A
 else:
     fps_w=cap.get(cv2.CAP_PROP_FPS)
 print("[Info] Intializing camera...")
+
+print("[Info] Runn Press q to exit....")
 while True:
     if (cap.isOpened()):
         _,frame = cap.read()      ###Reading frame
         #print("[Info] Frame read")
         cv2.putText(frame,a,(20,20),cv2.FONT_HERSHEY_PLAIN,1,(0,255,0))  ## Putting frame's widht and frame height on frame
         cv2.putText(frame, fps_w, (20, 40), cv2.FONT_HERSHEY_PLAIN, 1, (0, 255, 0))  ##putting FPS of camera on frame
-        dets= detector(frame)               ### detector
+        dets= detector(frame)               ### face_detector
         for (i,rect) in enumerate(dets):
             (x,y,w,h ) =dets_to_bb(rect)       ###calling the above defined function.. see above defined function for detail
-            #cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),1)
-
+            cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),1)
+            #print(x,y,w,h)
             roi = frame[x:x+w,y:y+h]         ### getting roi for the img2 to place
             rows, cols, channels = roi.shape   ##getting rows and cols of roi to resize the img2
+            #print('roi --> rows: {} ,cols: {} '.format(rows,cols))
             img2 = cv2.resize(img2,(cols,rows))   ###resizing the img2 according to the size of roi
+            rows1,cols1,channels1=img2.shape
             #cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),1)
+            #print('img2--->rows {} cols:{}'.format(rows1,cols1))
 
             img2gray = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)  ##Converting frame to gray scale.
+
             ret, mask = cv2.threshold(img2gray, 249,255 , cv2.THRESH_BINARY_INV)    ###thresholding the captured frame. cv2.threshold(gray_scale_frame,lower_range)thresholding,upper_range_thresholding,type_of_thresholding)
             # cv2.imshow("mask",mask)
             mask_inv = cv2.bitwise_not(mask)  ## making inverse of above thresholded image
+            
             img1_bg = cv2.bitwise_and(roi,roi,mask=mask_inv)  ##bitwise and  between roi and mask_inv
             img2_fg = cv2.bitwise_and(img2,img2,mask=mask)   ##bitwise and between img2(image to be placed on frame) and mask
             dst = cv2.add(img1_bg,img2_fg)     ## alpha blending of image
